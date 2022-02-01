@@ -34,7 +34,7 @@
     "style linter"
   ],
   "dependencies": {
-    "eslint-plugin-vue": "^7.19.1",
+    "eslint-plugin-vue": "^8.0.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-node": "^11.1.0",
