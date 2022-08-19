@@ -35,15 +35,15 @@
   ],
   "dependencies": {
     "eslint-plugin-vue": "^9.0.0",
-    "eslint-config-standard": "^16.0.3",
+    "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^5.1.0"
+    "eslint-plugin-promise": "^6.0.0"
   },
   "devDependencies": {
-    "eslint": "^7.32.0"
+    "eslint": "^8.0.0"
   },
   "peerDependencies": {
-    "eslint": "^7.32.0"
+    "eslint": "^8.0.0"
   }
 }
