@@ -1,0 +1,83 @@
+---
+# Whenever a PR is closed and merged to main,
+# create a library release and publish it in the NPM registry
+# Semver increment is based on labels in the pull-request
+# for more details have a look at the implementation at see:
+# https://github.com/tyriis/semver-from-pr-label-action
+
+name: Semver Release
+on:
+  pull_request:
+    branches: [main]
+    types: [closed]
+
+jobs:
+  semver-release:
+    name: Semver Release
+    # only execute if pr was merged
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: write
+      pull-requests: read
+
+    steps:
+
+      # https://github.com/tyriis/semver-from-pr-label-action
+      - name: Detect Semver Upgrade
+        id: detect
+        uses: tyriis/semver-from-pr-label-action@v2.0.0
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # https://github.com/actions/checkout
+      - name: Checkout Code
+        if: ${{ steps.detect.outputs.releaseType != 'skip' }}
+        uses: actions/checkout@v3.0.2
+        with:
+          ref: main
+          token: ${{ secrets.GH_PUSH }}
+
+      # https://github.com/actions/setup-node
+      - name: Setup Node
+        if: ${{ steps.detect.outputs.releaseType != 'skip' }}
+        uses: actions/setup-node@v3.5.0
+        with:
+          node-version: 16
+          registry-url: https://npm.pkg.github.com/
+          scope: '@strg-at'
+
+      # https://github.com/oleksiyrudenko/gha-git-credentials
+      - name: Setup GIT
+        if: ${{ steps.detect.outputs.releaseType != 'skip' }}
+        uses: oleksiyrudenko/gha-git-credentials@v2.1
+        with:
+          token: ${{ secrets.GH_PUSH }}
+          email: ${{ secrets.STRG_AUTOMATION_USER_EMAIL }}
+          name: STRG Automation
+
+      # https://github.com/actions/cache
+      - name: Setup Dependency Cache
+        if: ${{ steps.detect.outputs.releaseType != 'skip' }}
+        uses: actions/cache@v3.0.8
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-
+
+      - name: Install Dependencies
+        if: ${{ steps.detect.outputs.releaseType != 'skip' }}
+        run: npm ci
+
+      - name: Security Audit
+        if: ${{ steps.detect.outputs.releaseType != 'skip' }}
+        run: npm audit --production
+
+      - name: Bump Version
+        if: ${{ steps.detect.outputs.releaseType != 'skip' }}
+        run: 'npm version ${{ steps.detect.outputs.releaseType }} -m "release: %s"'
+
+      - name: GIT Push Changes
+        if: ${{ steps.detect.outputs.releaseType != 'skip' }}
+        run: git push && git push --tags

@@ -1,19 +1,74 @@
 {
-  "enabled": true,
-  "semanticCommits": "enabled",
-  "dependencyDashboard": true,
-  "dependencyDashboardTitle": ":robot: Renovate Dashboard",
-  "suppressNotifications": ["prIgnoreNotification"],
-  "rebaseWhen": "conflicted",
-  "labels": ["dependencies"],
-  "packageRules": [
+  enabled: true,
+  semanticCommits: "enabled",
+  dependencyDashboard: true,
+  dependencyDashboardTitle: ":robot: Renovate Dashboard",
+  suppressNotifications: ["prIgnoreNotification"],
+  // enable pre-commit, see: https://docs.renovatebot.com/modules/manager/pre-commit/
+  "pre-commit": {
+    enabled: true,
+  },
+  extends: [
+    "config:base",
+    "default:label(dependencies)"
+  ],
+  vulnerabilityAlerts: {
+    addLabels: ["security"],
+  },
+  packageRules: [
+    // label patches
     {
-      "matchPackagePatterns": ["eslint"],
-      "labels": ["linting"]
+      matchUpdateTypes: ["patch"],
+      addLabels: ["patch"],
+      automerge: true,
     },
+    // label minor updates
     {
-      "matchDepTypes": ["optionalDependencies"],
-      "addLabels": ["optional"]
-    }
-  ]
+      matchUpdateTypes: ["minor"],
+      addLabels: ["minor"],
+      automerge: true,
+    },
+    // label major updates
+    {
+      matchUpdateTypes: ["major"],
+      addLabels: ["major"],
+      automerge: true,
+    },
+    // label optional dependencies
+    {
+      matchDepTypes: ["optionalDependencies"],
+      addLabels: ["optional"],
+      automerge: true,
+    },
+    // label peer dependencies
+    {
+      matchDepTypes: ["peerDependencies"],
+      addLabels: ["peer"],
+    },
+    // label dev dependencies
+    {
+      matchDepTypes: ["devDependencies"],
+      addLabels: ["dev"],
+      automerge: true,
+    },
+    // label pre-commit
+    {
+      matchManagers: ["pre-commit"],
+      labels: ["dev", "pre-commit"],
+      automerge: true,
+    },
+    // label github-actions
+    {
+      matchManagers: ["github-actions"],
+      labels: ["dev", "github-actions"],
+      automerge: true,
+    },
+    // label nvm
+    {
+      matchManagers: ["nvm"],
+      labels: ["dev", "nvm"],
+      automerge: true,
+    },
+  ],
+  timezone: "Europe/Vienna",
 }
