@@ -27,7 +27,7 @@ jobs:
       # https://github.com/tyriis/semver-from-pr-label-action
       - name: Detect Semver Upgrade
         id: detect
-        uses: tyriis/semver-from-pr-label-action@v2.0.0
+        uses: tyriis/semver-from-pr-label-action@v2.0.1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
