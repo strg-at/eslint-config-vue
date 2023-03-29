@@ -1,6 +1,6 @@
 {
   "name": "@strg-at/eslint-config-vue",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Vue ESLint configuration for STRG.",
   "author": "STRG.",
   "license": "MIT",
